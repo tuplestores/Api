@@ -21,13 +21,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.tuplestores.api.model.general.User;
 import com.tuplestores.api.service.AuthenticationService;
 
-
 @Controller
 public class AuthenticationController {
 
 	@Autowired
 	AuthenticationService authenticationService;
-	
+//this
 	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(value = "/signin", method = RequestMethod.GET)
@@ -40,6 +39,7 @@ public class AuthenticationController {
 			//password=EncryptPassword.encrypt(password);
 			User user=authenticationService.SignIn(email,password);
 			map.put("user", user);	
+			//aasdasdsa
 		} catch (Exception e) {
 			map.put("user", null);
 			e.printStackTrace();
