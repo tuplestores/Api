@@ -22,12 +22,11 @@ import com.tuplestores.api.model.general.User;
 import com.tuplestores.api.service.AuthenticationService;
 
 
-@Controller
 public class AuthenticationController {
 
 	@Autowired
 	AuthenticationService authenticationService;
-//thisaaa
+
 	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(value = "/signin", method = RequestMethod.GET)
