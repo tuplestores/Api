@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.tuplestores.api.model.general.User;
 import com.tuplestores.api.service.AuthenticationService;
 
+//Controller for authentication purpose
+// Created by Ajish 
 
 @Controller
 public class AuthenticationController {
