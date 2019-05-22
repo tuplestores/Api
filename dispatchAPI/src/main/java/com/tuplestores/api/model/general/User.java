@@ -3,19 +3,19 @@ package com.tuplestores.api.model.general;
 public class User {
 
 
-	private long userId;
+	private String userId;
 	private String email;
 	private String password;
 	private String firstName;
 	private String lastName;
 	private String isdCode;
 	private String mobile;
-	private long tenant_id;
+	private String tenant_id;
 	private String tenant_name;
-	public long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
-	public void setUserId(long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 	public String getEmail() {
@@ -54,10 +54,10 @@ public class User {
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
-	public long getTenant_id() {
+	public String getTenant_id() {
 		return tenant_id;
 	}
-	public void setTenant_id(long tenant_id) {
+	public void setTenant_id(String tenant_id) {
 		this.tenant_id = tenant_id;
 	}
 	public String getTenant_name() {
