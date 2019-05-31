@@ -12,6 +12,13 @@ public class User {
 	private String mobile;
 	private String tenant_id;
 	private String tenant_name;
+	private String invite;
+	public String getInvite() {
+		return invite;
+	}
+	public void setInvite(String invite) {
+		this.invite = invite;
+	}
 	public String getUserId() {
 		return userId;
 	}
