@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.tuplestores.api.model.general.ApiResponse;
 import com.tuplestores.api.model.general.User;
 import com.tuplestores.api.service.AuthenticationMobileService;
 import com.tuplestores.api.service.AuthenticationService;
@@ -40,11 +41,11 @@ public class MobileAuthenticationController {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		try {
 			
-			User user=authenticationMobileService.verifydriver(isd,Mobile,invite);
-			map.put("user", user);	
+			ApiResponse res=authenticationMobileService.verifydriver(isd,Mobile,invite);
+			map.put("obj", res);	
 
 		} catch (Exception e) {
-			map.put("user", null);
+			map.put("obj", null);
 			e.printStackTrace();
 		}		
 				

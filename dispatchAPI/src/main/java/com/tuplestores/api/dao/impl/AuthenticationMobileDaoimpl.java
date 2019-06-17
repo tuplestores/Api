@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.tuplestores.api.dao.AuthenticationMobileDao;
 import com.tuplestores.api.dao.DispatchDBConnection;
+import com.tuplestores.api.model.general.ApiResponse;
 import com.tuplestores.api.model.general.User;
 
 @Repository("authenticationMobileDao")
@@ -20,36 +21,35 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 		
 		
 	@Override
-	public User verifydriver(String isdCode, String mobile,String invite) {
+	public ApiResponse verifydriver(String isdCode, String mobile,String invite) {
 		User user=null;
 		CallableStatement callableStatement = null;
 		Connection con = null;
-		ResultSet rs = null;
+		String out = "E";
+		ApiResponse api = null;
+		
 		try {
+			api = new ApiResponse();
 			callableStatement = con.prepareCall("(call da_verify_driver_p)");
 			
 			callableStatement.setString(1, isdCode);
 			callableStatement.setString(2, mobile);
 			callableStatement.setString(3, invite);
-			rs = callableStatement.executeQuery();
+			callableStatement.registerOutParameter(4,java.sql.Types.VARCHAR );
+			callableStatement.executeUpdate();
+			out = callableStatement.getString(2);
+			api.setStatus(out);
+			api.setMsg("SUCCESS");
 			
-			if(rs.next()) {
-				user = new User();
-				user.setIsdCode(rs.getString("ISD Code"));
-				user.setMobile(rs.getString("Mobile"));
-				user.setInvite(rs.getString("Invite"));
-			}
+			
 		}
 		catch(Exception e) {
-			user=null;
+			out = "E";
+			api.setStatus(out);
+			api.setMsg("SUCCESS");
 			e.printStackTrace();
 		}finally {
-			if(rs!=null)
-				try {
-					rs.close();
-				}catch(SQLException ex) {
-					ex.printStackTrace();
-				}
+			
 			if(con!=null)
 				try {
 					con.close();
@@ -57,7 +57,7 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 						ex.printStackTrace();
 					}
 		}
-		return user;
+		return api;
 				
 	}
 

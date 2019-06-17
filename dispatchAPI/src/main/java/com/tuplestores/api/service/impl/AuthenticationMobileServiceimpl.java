@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tuplestores.api.dao.AuthenticationMobileDao;
+import com.tuplestores.api.model.general.ApiResponse;
 import com.tuplestores.api.model.general.User;
 import com.tuplestores.api.service.AuthenticationMobileService;
 
@@ -14,7 +15,7 @@ public class AuthenticationMobileServiceimpl implements AuthenticationMobileServ
 	AuthenticationMobileDao authenticationMDao;
 	
 	@Override
-	public  User verifydriver(String isdCode, String mobile,String invite) {
+	public  ApiResponse verifydriver(String isdCode, String mobile,String invite) {
 		return authenticationMDao.verifydriver(isdCode,mobile,invite);	
 	}
 	
