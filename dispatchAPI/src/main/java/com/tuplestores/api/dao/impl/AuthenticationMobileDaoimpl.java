@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.tuplestores.api.dao.AuthenticationMobileDao;
 import com.tuplestores.api.dao.DispatchDBConnection;
 import com.tuplestores.api.model.general.ApiResponse;
+import com.tuplestores.api.model.general.Driver;
 import com.tuplestores.api.model.general.User;
 
 @Repository("authenticationMobileDao")
@@ -27,7 +28,8 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 		Connection con = null;
 		String out = "E";
 		ApiResponse api = null;
-		
+		Driver driver = null;
+		String driverid=null;
 		try {
 			api = new ApiResponse();
 			callableStatement = con.prepareCall("(call da_verify_driver_p)");
@@ -35,18 +37,22 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 			callableStatement.setString(1, isdCode);
 			callableStatement.setString(2, mobile);
 			callableStatement.setString(3, invite);
-			callableStatement.registerOutParameter(4,java.sql.Types.VARCHAR );
+			callableStatement.registerOutParameter(4,java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(5,java.sql.Types.VARCHAR );
 			callableStatement.executeUpdate();
-			out = callableStatement.getString(2);
+			out = callableStatement.getString(4);
+			driverid = callableStatement.getString(5);
 			api.setStatus(out);
 			api.setMsg("SUCCESS");
-			
+			driver.setDriver_id(driverid);
+
 			
 		}
 		catch(Exception e) {
 			out = "E";
 			api.setStatus(out);
-			api.setMsg("SUCCESS");
+			api.setMsg("Failure");
+			driver.setDriver_id("Failure");
 			e.printStackTrace();
 		}finally {
 			

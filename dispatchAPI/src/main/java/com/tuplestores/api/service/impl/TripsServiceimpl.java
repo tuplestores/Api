@@ -21,5 +21,11 @@ public class TripsServiceimpl implements TripsService{
 		return tripsDao.getvehiclelist(tenant_id);
 		
 	}
+	//attach vehicle
+	@Override 
+	public Vehicle attachvehicle(String tenant_id,String driver_id,String vehicle_id) {
+		return tripsDao.attachvehicle(tenant_id,driver_id,vehicle_id);
+		
+	}
 
 }

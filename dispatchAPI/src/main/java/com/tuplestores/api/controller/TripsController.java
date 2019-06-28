@@ -32,7 +32,7 @@ public class TripsController {
 	@CrossOrigin(origins = "*")
 	@RequestMapping(value = "/getvehiclelist" ,method = RequestMethod.GET)
 	public @ResponseBody Object vehiclelist(@RequestParam String tenant_id,@RequestParam String vehicle_name,
-											@RequestParam String vehicle_id,@RequestParam String plate_number,
+			@RequestParam String vehicle_id,@RequestParam String plate_number,
 											HttpSession session,
 											HttpServletRequest request) {
 		
@@ -48,6 +48,28 @@ public class TripsController {
 		}
 		return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
 	}
+	
+	
+	//----------------attach vehicle-----------------------
+	@RequestMapping(value = "/attachvehicle" , method = RequestMethod.POST)
+	public @ResponseBody Object attachvehicle(@RequestParam String vehicle_id,@RequestParam String driver_id,@RequestParam String tenant_id,@RequestParam String status,
+											  HttpSession session,
+											  
+											  HttpServletRequest request) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		try {
+			Vehicle vehicle=tripsService.attachvehicle(tenant_id,driver_id,vehicle_id);
+			map.put("vehicle", vehicle);		
+		} catch (Exception e) {
+			map.put("vehicle", null);
+			e.printStackTrace();
+		}		
+		return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
+		
+		}
+	
+
 	
 }//Class
 
