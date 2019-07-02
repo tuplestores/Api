@@ -9,8 +9,10 @@ import com.tuplestores.api.dao.TripsDao;
 import com.tuplestores.api.model.general.Vehicle;
 import com.tuplestores.api.service.TripsService;
 
+
 @Service("tripsService")
 public class TripsServiceimpl implements TripsService{
+	
 	@Autowired
 	TripsDao tripsDao;
 

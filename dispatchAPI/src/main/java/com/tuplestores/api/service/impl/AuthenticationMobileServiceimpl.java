@@ -8,15 +8,15 @@ import com.tuplestores.api.model.general.ApiResponse;
 import com.tuplestores.api.model.general.User;
 import com.tuplestores.api.service.AuthenticationMobileService;
 
-@Service("authenticationService")
+@Service("authenticationMobileService")
 public class AuthenticationMobileServiceimpl implements AuthenticationMobileService{
 	
 	@Autowired
-	AuthenticationMobileDao authenticationMDao;
+	AuthenticationMobileDao authenticationMobileDao;
 	
 	@Override
 	public  ApiResponse verifydriver(String isdCode, String mobile,String invite) {
-		return authenticationMDao.verifydriver(isdCode,mobile,invite);	
+		return authenticationMobileDao.verifydriver(isdCode,mobile,invite);	
 	}
 	
 }

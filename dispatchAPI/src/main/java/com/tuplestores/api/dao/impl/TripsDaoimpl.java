@@ -19,7 +19,7 @@ import com.tuplestores.api.model.general.Driver;
 import com.tuplestores.api.model.general.Vehicle;
 
 
-@Repository("TripsDao")
+@Repository("tripsDao")
 public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 	
 	@Autowired
