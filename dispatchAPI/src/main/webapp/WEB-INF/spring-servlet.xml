@@ -12,7 +12,7 @@
 		
 	<mvc:default-servlet-handler/>
     <context:property-placeholder location="classpath:*.properties" />
-    <context:component-scan base-package="org.tuplestores" />
+    <context:component-scan base-package="com.tuplestores" />
     <context:annotation-config />
     <import resource="dispatch-common-jdbc.xml"/>
 	
@@ -25,6 +25,10 @@
     		 
     <context:component-scan base-package="com.tuplestores.api.controller"></context:component-scan>
       <context:component-scan base-package="com.tuplestores.api"></context:component-scan>
+      <context:component-scan base-package="com.tuplestores.api.service.impl"></context:component-scan>
+        <context:component-scan base-package="com.tuplestores.api.dao.impl"></context:component-scan>
+         <context:component-scan base-package="com.tuplestores.api.service"></context:component-scan>
+        <context:component-scan base-package="com.tuplestores.api.dao"></context:component-scan>
     		
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<mvc:annotation-driven />
