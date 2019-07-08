@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.tuplestores.api.model.general.ApiResponse;
+import com.tuplestores.api.model.general.TripsModel;
 import com.tuplestores.api.model.general.Vehicle;
 import com.tuplestores.api.service.TripsService;
 
@@ -69,7 +71,79 @@ public class TripsController {
 		
 		}
 	
-
+	//---------------GET TRIPS-----------------------------------
+	@RequestMapping(value = "/getTrips" , method = RequestMethod.POST)
+	public @ResponseBody Object  getTrips(@RequestParam String tenant_id,@RequestParam String driver_id,
+											@RequestParam String fromDate,
+											@RequestParam String toDate,
+											HttpSession session,
+											HttpServletRequest request) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		try {
+			List<TripsModel> tripList=tripsService.getTrips(tenant_id, driver_id, fromDate, toDate);
+			map.put("trips", tripList);
+		}catch(Exception e) {
+			map.put("trips",null);
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
+	}
+	
+	
+	//-----------------SEND LOCATIONS---------------------------------
+		@RequestMapping(value = "/updateLocation", method = RequestMethod.POST)
+		public @ResponseBody Object sendLocations(@RequestParam String device_data,
+												  HttpSession session,
+												  HttpServletRequest request) {
+			Map<String, Object> map = new LinkedHashMap<String, Object>();
+			HttpHeaders httpHeaders = new HttpHeaders();
+			try {
+				ApiResponse api=tripsService.updateLocation(device_data);
+				map.put("device_data", device_data);
+			}catch(Exception e) {
+				map.put("device_data",null);
+				e.printStackTrace();
+			}
+			return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
+		}
+		
+		//------------Accept Ride Requests-----------------------------
+		@RequestMapping(value = "/acceptRideRequests", method = RequestMethod.POST)
+		public @ResponseBody Object acceptRideRequests(@RequestParam String tenant_id,@RequestParam String ride_request_id,
+														@RequestParam String vehicle_id,@RequestParam String driver_id,
+														HttpSession session,
+														HttpServletRequest request) {
+			Map<String, Object> map = new LinkedHashMap<String, Object>();
+			HttpHeaders httpHeaders = new HttpHeaders();
+			try {
+				ApiResponse api=tripsService.acceptRideRequest(tenant_id,ride_request_id,vehicle_id,driver_id);
+				map.put("api",api);
+			}catch(Exception e) {
+				map.put("api",null);
+				e.printStackTrace();
+			}
+			return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
+		}
+		
+		//--------------Decline Ride Requests
+		@RequestMapping(value = "/declineRideRequests", method = RequestMethod.POST)
+		public @ResponseBody Object declineRideRequests(@RequestParam String tenant_id,@RequestParam String ride_request_id,
+														@RequestParam String vehicle_id,@RequestParam String driver_id,
+														HttpSession session,
+														HttpServletRequest request) {
+			Map<String, Object> map = new LinkedHashMap<String, Object>();
+			HttpHeaders httpHeaders = new HttpHeaders();
+			try {
+				ApiResponse api=tripsService.declineRideRequest(tenant_id,ride_request_id,vehicle_id,driver_id);
+				map.put("api",api);
+			}catch(Exception e) {
+				map.put("api",null);
+				e.printStackTrace();
+			}
+			return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
+		}
+	
 	
 }//Class
 
