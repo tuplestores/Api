@@ -56,6 +56,30 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 		}catch(Exception e) {
 			vehicle = null;
 			e.printStackTrace();
+		}finally {
+			if(rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(callableStatement!=null) {
+				try {
+					callableStatement.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(con!=null)
+				try {
+					con.close();
+					}catch (SQLException ex) {
+						ex.printStackTrace();
+					}
+			
 		}
 		
 			return lstVehicle;
@@ -138,8 +162,24 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 				rs = callableStatement.executeQuery();
 				if(rs.next()) {
 					TripsModel tm = new TripsModel();
+					
+					
+					tm.setRide_request_id(rs.getNString("ride_request_id"));
+					tm.setRequest_date_time(rs.getString("request_date_time"));
+					tm.setProduct_id(rs.getString("product_id"));
+					tm.setProduct_name(rs.getString("Product_name"));
+					tm.setRider_id(rs.getString("rider_id"));
+					tm.setRider_first_name(rs.getString("rider_first_name"));
+					tm.setRider_last_name(rs.getString("rider_last_name"));
+					tm.setPick_up_latitude(rs.getString("pick_up_latitude"));
+					tm.setPick_up_longitude(rs.getString("pickup_longitude"));
 					tm.setPick_up_location_text(rs.getString("pick_up_location_text"));
+					tm.setDrop_off_latitude(rs.getString("drop_off_latitude"));
+					tm.setDrop_off_longitude(rs.getString("drop_off_longitude"));
 					tm.setDrop_off_location_text(rs.getString("drop_off_location_text"));
+					tm.setAccept_date_time(rs.getString("accept_date_time"));
+					tm.setPick_up_date_time(rs.getString("pick_up_date_time"));
+					tm.setDrop_off_date_time(rs.getString("drop_off_date_time"));
 					tripList.add(tm);
 					tm = null;
 				
@@ -215,8 +255,9 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			}
 			return api;
 		}
-
 		
+		
+		//---------------------Accept Ride Request
 		@Override
 		public ApiResponse acceptRideRequest(String tenant_id, String ride_request_id, String vehicle_id,String driver_id) {
 			java.sql.CallableStatement callableStatement = null;
@@ -239,15 +280,52 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			}catch(Exception e) {
 				api.setStatus("Failed");
 				e.printStackTrace();
+			}finally {
+				
+				if(con!=null)
+					try {
+						con.close();
+						}catch (SQLException ex) {
+							ex.printStackTrace();
+						}
 			}
-			return null;//aa
+			return api;
 		}
-	//decline ride
+	//decline ride request
 		@Override
 		public ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id,
 				String driver_id) {
-			// TODO Auto-generated method stub
-			return null;
+			java.sql.CallableStatement callableStatement = null;
+			Connection con = null;
+			ApiResponse api = null;
+			String out = "E";
+			
+			try {
+				api = new ApiResponse();
+				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
+				callableStatement = con.prepareCall("{call da_decline_ride_p}");
+				callableStatement.setString(1, tenant_id);
+				callableStatement.setString(2, ride_request_id);
+				callableStatement.setString(3, vehicle_id);
+				callableStatement.setString(4, driver_id);
+				callableStatement.registerOutParameter(5,java.sql.Types.VARCHAR);
+				callableStatement.executeUpdate();
+				out = callableStatement.getNString(5) ;
+				api.setStatus(out);
+			}catch(Exception e) {
+				api.setStatus("Failed");
+				e.printStackTrace();
+			}finally {
+				
+				if(con!=null)
+					try {
+						con.close();
+						}catch (SQLException ex) {
+							ex.printStackTrace();
+						}
+			}
+			return api;
+		
 			
 		}
 
