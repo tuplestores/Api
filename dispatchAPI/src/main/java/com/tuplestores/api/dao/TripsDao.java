@@ -3,6 +3,7 @@ package com.tuplestores.api.dao;
 import java.util.List;
 
 import com.tuplestores.api.model.general.ApiResponse;
+import com.tuplestores.api.model.general.TripRequest;
 import com.tuplestores.api.model.general.TripsModel;
 import com.tuplestores.api.model.general.Vehicle;
 
@@ -20,5 +21,7 @@ public interface TripsDao {
 	ApiResponse acceptRideRequest(String tenant_id, String ride_request_id, String vehicle_id, String driver_id);
 	
 	ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id,String driver_id);
+	
+	List<TripRequest> getRiderRequest(String tenant_id, String vehicle_id);
 	
 }

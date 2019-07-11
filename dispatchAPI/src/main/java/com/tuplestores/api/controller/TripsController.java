@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tuplestores.api.model.general.ApiResponse;
+import com.tuplestores.api.model.general.TripRequest;
 import com.tuplestores.api.model.general.TripsModel;
 import com.tuplestores.api.model.general.Vehicle;
 import com.tuplestores.api.service.TripsService;
@@ -139,6 +140,24 @@ public class TripsController {
 				map.put("api",api);
 			}catch(Exception e) {
 				map.put("api",null);
+				e.printStackTrace();
+			}
+			return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
+		}
+		
+		//--------get ride request---------------
+		
+		@RequestMapping(value = "/getRiderRequest" , method = RequestMethod.POST)
+		public @ResponseBody Object  getRiderRequest(@RequestParam String tenant_id,@RequestParam String vehicle_id,
+												HttpSession session,
+												HttpServletRequest request) {
+			Map<String, Object> map = new LinkedHashMap<String, Object>();
+			HttpHeaders httpHeaders = new HttpHeaders();
+			try {
+				List<TripRequest> triprequest=tripsService.getRiderRequest(tenant_id, vehicle_id);
+				map.put("trips", triprequest);
+			}catch(Exception e) {
+				map.put("trips",null);
 				e.printStackTrace();
 			}
 			return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);

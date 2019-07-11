@@ -2,7 +2,9 @@ package com.tuplestores.api.service;
 
 import java.util.List;
 
+
 import com.tuplestores.api.model.general.ApiResponse;
+import com.tuplestores.api.model.general.TripRequest;
 import com.tuplestores.api.model.general.TripsModel;
 import com.tuplestores.api.model.general.Vehicle;
 
@@ -28,6 +30,9 @@ public interface TripsService {
 		
 		//decline ride request
 		ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id, String driver_id);
+		
+		//get ride request
+		List<TripRequest> getRiderRequest(String tenant_id, String vehicle_id);
 
 		
 }

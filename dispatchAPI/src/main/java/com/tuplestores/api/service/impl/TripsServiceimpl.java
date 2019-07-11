@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.tuplestores.api.dao.TripsDao;
 import com.tuplestores.api.model.general.ApiResponse;
+import com.tuplestores.api.model.general.TripRequest;
 import com.tuplestores.api.model.general.TripsModel;
 import com.tuplestores.api.model.general.Vehicle;
 import com.tuplestores.api.service.TripsService;
@@ -51,6 +52,12 @@ public class TripsServiceimpl implements TripsService{
 	public List<TripsModel> getTrips(String tenant_id, String driver_id,String fromDate, String toDate) {
 		// TODO Auto-generated method stub
 		return tripsDao.getTrips(tenant_id,driver_id,fromDate,toDate);
+	}
+	@Override
+	public List<TripRequest> getRiderRequest(String tenant_id, String vehicle_id) {
+		return tripsDao.getRiderRequest(tenant_id, vehicle_id);
+		// TODO Auto-generated method stub
+	
 	}
 	
 

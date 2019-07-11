@@ -16,6 +16,7 @@ import com.mysql.cj.jdbc.CallableStatement;
 import com.tuplestores.api.dao.DispatchDBConnection;
 import com.tuplestores.api.model.general.ApiResponse;
 import com.tuplestores.api.model.general.Driver;
+import com.tuplestores.api.model.general.TripRequest;
 import com.tuplestores.api.model.general.TripsModel;
 import com.tuplestores.api.model.general.Vehicle;
 
@@ -329,4 +330,78 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			
 		}
 
-}
+		@Override
+		public List<TripRequest> getRiderRequest(String tenant_id, String vehicle_id) {
+			
+				
+				List<TripRequest> tripRequest= null;
+				
+		
+				java.sql.CallableStatement callableStatement = null;
+				Connection con = null;
+				ResultSet rs = null;
+				try {
+					 tripRequest = new ArrayList<TripRequest>();
+					 
+					con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
+					callableStatement = con.prepareCall("{call da_get_new_ride_request_p()}");
+					callableStatement.setString(1, tenant_id);
+					callableStatement.setString(2, vehicle_id);
+					
+
+					rs = callableStatement.executeQuery();
+					if(rs.next()) {
+						TripRequest tm = new TripRequest();
+						tm.setRide_request_id(rs.getString("ride_request_id"));
+						tm.setProduct_id(rs.getString("product_id"));
+						tm.setProduct_name(rs.getString("Product_name"));
+						tm.setRider_id(rs.getString("rider_id"));
+						tm.setRider_full_name(rs.getString("rider_full_name"));
+						tm.setPick_up_latitude(rs.getString("pick_up_latitude"));
+						tm.setPick_up_longitude(rs.getString("pickup_longitude"));
+						tm.setPick_up_location_text(rs.getString("pick_up_location_text"));
+						tm.setDrop_off_latitude(rs.getString("drop_off_latitude"));
+						tm.setDrop_off_longitude(rs.getString("drop_off_longitude"));
+						tm.setDrop_off_location_text(rs.getString("drop_off_location_text"));
+						
+						tripRequest.add(tm);
+						tm = null;
+					
+					}
+					
+				}catch(Exception e){
+				
+					e.printStackTrace();
+				}finally {
+					if(rs!=null) {
+						try {
+							rs.close();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if(callableStatement!=null) {
+						try {
+							callableStatement.close();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if(con!=null)
+						try {
+							con.close();
+							}catch (SQLException ex) {
+								ex.printStackTrace();
+							}
+					
+				}
+				
+				
+				return tripRequest;
+				
+			}
+		}
+
+
