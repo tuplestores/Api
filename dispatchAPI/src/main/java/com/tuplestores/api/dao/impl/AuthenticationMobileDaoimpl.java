@@ -23,48 +23,67 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 		
 		
 	@Override
-	public ApiResponse verifydriver(String isdCode, String mobile,String invite) {
-		User user=null;
+	public DriverModel verifydriver(String isdCode, String mobile,String invite) {
 		CallableStatement callableStatement = null;
 		Connection con = null;
 		String out = "E";
-		ApiResponse api = null;
-		Driver driver = null;
-		String driverid=null;
+		String tenant_id;
+		DriverModel driver = null;
+		
 		try {
-			api = new ApiResponse();
-			callableStatement = con.prepareCall("(call da_verify_driver_p)");
+			
+			driver = new DriverModel();
+			con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
+			
+			//callableStatement = con.prepareCall("{call ap_sign_in_p(?,?)}");
+			callableStatement = con.prepareCall("{call da_verify_driver_p(?,?,?,?,?,?)}");
 			
 			callableStatement.setString(1, isdCode);
 			callableStatement.setString(2, mobile);
 			callableStatement.setString(3, invite);
-			callableStatement.registerOutParameter(4,java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(5,java.sql.Types.VARCHAR );
+			callableStatement.registerOutParameter(4,java.sql.Types.VARCHAR); //driver id
+			callableStatement.registerOutParameter(5,java.sql.Types.VARCHAR );// tenant id
+			callableStatement.registerOutParameter(6,java.sql.Types.CHAR ); //valid
 			callableStatement.executeUpdate();
-			out = callableStatement.getString(4);
-			driverid = callableStatement.getString(5);
-			api.setStatus(out);
-			api.setMsg("SUCCESS");
-			driver.setDriver_id(driverid);
+			out = callableStatement.getString(6);
+			String driver_id = callableStatement.getString(4);//driver id
+			tenant_id=  callableStatement.getString(5);//tenant_id;
+	
+			driver.setDriver_id(driver_id);
+			driver.setTenant_id(tenant_id);
+			driver.setStatus(out);
 
 			
 		}
 		catch(Exception e) {
 			out = "E";
-			api.setStatus(out);
-			api.setMsg("Failure");
-			driver.setDriver_id("Failure");
+			
+			driver.setStatus(out);
 			e.printStackTrace();
 		}finally {
 			
-			if(con!=null)
+			if(con!=null) {
+				
 				try {
 					con.close();
-					}catch (SQLException ex) {
-						ex.printStackTrace();
-					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			
+			if(callableStatement!=null) {
+				
+				try {
+					callableStatement.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
-		return api;
+		return driver;
 				
 	}
 	
@@ -83,7 +102,9 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 
 				
 				try {
+					
 					con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
+					
 					callableStatement = con.prepareCall("{call ap_list_vehicle_p(?)}");
 					
 					callableStatement.setString(1,driver_id);
@@ -120,30 +141,45 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 		//--------------Update Driver Profile
 
 		@Override
-		public ApiResponse updateDriverProfile(String driver_id, String email,
-				String first_name, String last_name,
-				String isd_code, String mobile) {
+		public ApiResponse updateDriverProfile(String tenant_id,String driver_id, String email,
+											   String first_name, String last_name,
+											   String isd_code, String mobile) {
 			java.sql.CallableStatement callableStatement = null;
 			Connection con = null;
 			ApiResponse api = null;
 			String out = "E";
 			try {
+				api= new ApiResponse();
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-				callableStatement = con.prepareCall("{}");
-				callableStatement.setString(1, driver_id);
-				callableStatement.setString(2, email);
-				callableStatement.setString(3, first_name);
-				callableStatement.setString(4,last_name);
-				callableStatement.setString(5, isd_code);
-				callableStatement.setString(6, mobile);
-				api.setStatus("Status");
+				callableStatement = con.prepareCall("{call ap_update_driver_p(?,?,?,?,?,?,?,?)}");
+				callableStatement.setString(1, tenant_id);
+				callableStatement.setString(2, driver_id);
+				callableStatement.setString(3, email);
+				callableStatement.setString(4, first_name);
+				callableStatement.setString(7,last_name);
+				callableStatement.setString(6, isd_code);
+				callableStatement.setString(7, mobile);
+				callableStatement.registerOutParameter(8, java.sql.Types.CHAR);
+				callableStatement.executeUpdate();
+				out = callableStatement.getString(4);
+				api.setStatus(out);
 				api.setMsg("Message");
 				
 			}catch(Exception e) {
-				api.setMsg("Message");
-				api.setStatus("Status");
+				api.setStatus("E");
+			
 				e.printStackTrace();
 			}finally {
+				
+				if(callableStatement!=null) {
+					try {
+						callableStatement.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
 				if(con!=null)
 					try {
 						con.close();

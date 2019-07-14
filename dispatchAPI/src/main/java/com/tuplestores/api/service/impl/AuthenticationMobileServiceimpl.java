@@ -16,25 +16,28 @@ public class AuthenticationMobileServiceimpl implements AuthenticationMobileServ
 	AuthenticationMobileDao authenticationMobileDao;
 	
 	@Override
-	public  ApiResponse verifydriver(String isdCode, String mobile,String invite) {
+	public  DriverModel verifydriver(String isdCode, String mobile,String invite) {
 		return authenticationMobileDao.verifydriver(isdCode,mobile,invite);	
 	}
 	
 	@Override
 	public DriverModel getDriverProfile(String driver_id) {
 		
-		// TODO Auto-generated method stub
+
 		return authenticationMobileDao.getDriverProfile(driver_id);
 		
 	}
+
 	@Override
-	public ApiResponse updateDriverProfile(String driver_id, String email, String first_name, String last_name,
-			String isd_code, String mobile) {
+	public ApiResponse updateDriverProfile(String tenant_id, String driver_id, String email, String first_name,
+			String last_name, String isd_code, String mobile) {
 		
 		
-		return authenticationMobileDao.updateDriverProfile(driver_id, email, first_name, last_name,
-				isd_code, mobile);
-	     
+		return authenticationMobileDao.updateDriverProfile(tenant_id, driver_id, email,
+				first_name, last_name, isd_code, mobile);
 	}
+	
+	
+
 	
 }

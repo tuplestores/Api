@@ -28,7 +28,7 @@ public class TripsServiceimpl implements TripsService{
 	}
 	//attach vehicle
 	@Override 
-	public Vehicle attachvehicle(String tenant_id,String driver_id,String vehicle_id) {
+	public ApiResponse attachvehicle(String tenant_id,String driver_id,String vehicle_id) {
 		return tripsDao.attachvehicle(tenant_id,driver_id,vehicle_id);
 		
 	}
@@ -39,25 +39,29 @@ public class TripsServiceimpl implements TripsService{
 	@Override
 	public ApiResponse acceptRideRequest(String tenant_id, String ride_request_id, String vehicle_id,
 			String driver_id) {
-		// TODO Auto-generated method stub
+		
 		return tripsDao.acceptRideRequest(tenant_id, ride_request_id, vehicle_id,driver_id);
 	}
 	@Override
-	public ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id,
-			String driver_id) {
-		// TODO Auto-generated method stub
-		return tripsDao.acceptRideRequest(tenant_id, ride_request_id, vehicle_id,driver_id);
+	public ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id) {
+		
+		return tripsDao.declineRideRequest(tenant_id, ride_request_id, vehicle_id);
 	}
 	
 	public List<TripsModel> getTrips(String tenant_id, String driver_id,String fromDate, String toDate) {
-		// TODO Auto-generated method stub
+		
 		return tripsDao.getTrips(tenant_id,driver_id,fromDate,toDate);
 	}
 	@Override
-	public List<TripRequest> getRiderRequest(String tenant_id, String vehicle_id) {
+	public TripRequest getRiderRequest(String tenant_id, String vehicle_id) {
 		return tripsDao.getRiderRequest(tenant_id, vehicle_id);
-		// TODO Auto-generated method stub
+		
 	
+	}
+	@Override
+	public ApiResponse dettachVehicle(String tenant_id, String driver_id) {
+		
+		return tripsDao.dettachVehicle(tenant_id, driver_id);
 	}
 	
 

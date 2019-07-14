@@ -13,7 +13,7 @@ public interface TripsService {
 		List<Vehicle> getvehiclelist(String tenant_id);
 	
 		//attach vehicle
-		Vehicle attachvehicle(String tenant_id, String driver_id, String vehicle_id);
+		ApiResponse attachvehicle(String tenant_id, String driver_id, String vehicle_id);
 	
 	
 		//get trips
@@ -29,10 +29,12 @@ public interface TripsService {
 		
 		
 		//decline ride request
-		ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id, String driver_id);
+		ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id);
 		
 		//get ride request
-		List<TripRequest> getRiderRequest(String tenant_id, String vehicle_id);
+		TripRequest getRiderRequest(String tenant_id, String vehicle_id);
+		
+		ApiResponse dettachVehicle(String tenant_id, String driver_id);
 
 		
 }

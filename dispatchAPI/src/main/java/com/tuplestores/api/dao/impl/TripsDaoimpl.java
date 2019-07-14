@@ -38,7 +38,12 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 		
 		try {
 			con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-			callableStatement = con.prepareCall("{call ap_list_vehicle_p(?)}");
+			
+			//callableStatement = con.prepareCall("{call ap_sign_in_p(?,?)}");
+			int len = tenant_id.length();
+			
+			callableStatement = con.prepareCall("{call ap_list_vehicles_p(?)}");
+			
 			
 			callableStatement.setString(1,tenant_id);
 			rs=callableStatement.executeQuery();
@@ -46,10 +51,10 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			
 			if(rs.next()) {
 				vehicle =new Vehicle();
-				vehicle.setTenant_id(rs.getString("Tenant_Id"));
+				vehicle.setTenant_id(tenant_id);
 				vehicle.setVehicle_id(rs.getString("Vehicle_id"));
-				vehicle.setVehicle_name(rs.getString("Vehicle_name"));
-				vehicle.setPlate_number(rs.getString("Plate_number"));
+				vehicle.setVehicle_name(rs.getString("vehicle_name"));
+				vehicle.setPlate_number(rs.getString("plate_number"));
 				lstVehicle.add(vehicle);
 				
 			}
@@ -87,53 +92,55 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 	}
 	
 	//----------attach vehicle------------------
-	public Vehicle attachvehicle(String vehicle_id,String tenant_id,String driver_id) {
-		Vehicle vehicle = null;
-		Driver driver = null;
+	public ApiResponse attachvehicle(String vehicle_id,String tenant_id,String driver_id) {
+		
+		
 		java.sql.CallableStatement callableStatement = null;
 		Connection con = null;
 		String out = "E";
 		ApiResponse api = null;
-		ResultSet rs = null;
+	
+		
 		try {
+			api = new ApiResponse();
 			con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-			callableStatement = con.prepareCall("{call da_driver_check_in_p}");
+			callableStatement = con.prepareCall("{call da_driver_check_in_p(?,?,?,?)}");
 			
 			callableStatement.setString(1,tenant_id);
 			callableStatement.setString(2, vehicle_id);
 			callableStatement.setString(3, driver_id);
-			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(4, java.sql.Types.CHAR);
 			callableStatement.executeUpdate();
 			out = callableStatement.getString(4);
 			api.setStatus(out);
 			
-			api.setMsg("Success");
-			
+			api.setMsg("Success");			
 			
 		}catch(Exception e) {
 			out = "E";
 			api.setStatus(out);
-			api.setMsg("Failure");
-			
+			api.setMsg("Failure");		
 			e.printStackTrace();
-		}finally {
-			if(con!=null)
+		}
+		finally {
+			
+			if(callableStatement!=null) {
 				try {
-					con.close();
-				}catch(SQLException ex) {
-					ex.printStackTrace();
-				}
-			if(rs!=null) {
-				try {
-					rs.close();
+					callableStatement.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			
+			if(con!=null)
+				try {
+					con.close();
+				}catch (SQLException ex) {
+						ex.printStackTrace();
+			}	
 		}
-		return vehicle;
+
+		return api;
 		
 	}
 	
@@ -144,17 +151,16 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			
 			List<TripsModel> tripList= null;
 			
-			String pickup_location_text = null;
-			String dropoff_location_text = null;
-			String cost = null;
+			
 			java.sql.CallableStatement callableStatement = null;
 			Connection con = null;
 			ResultSet rs = null;
 			try {
+				
 				 tripList = new ArrayList<TripsModel>();
 				 
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-				callableStatement = con.prepareCall("{call da_get_trips_p()}");
+				callableStatement = con.prepareCall("{call da_get_trips_p(?,?,?,?)}");
 				callableStatement.setString(1, tenant_id);
 				callableStatement.setString(2, driver_id);
 				callableStatement.setString(3, fromDate);
@@ -224,28 +230,38 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 		
 		@Override
 		public ApiResponse updateLocation(String device_data) {
+			
 			java.sql.CallableStatement callableStatement = null;
 			Connection con = null;
 			ApiResponse api = null;
-			String out = "E";
+			
 			
 			try {
 				api = new ApiResponse();
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-				callableStatement = con.prepareCall("{call da_load_device_data}");
+				callableStatement = con.prepareCall("{call da_load_device_data(?,?}");
 				callableStatement.setString(1, device_data);
-				callableStatement.registerOutParameter(2,java.sql.Types.VARCHAR);
+				callableStatement.registerOutParameter(2,java.sql.Types.CHAR);
 				callableStatement.executeUpdate();
-				out = callableStatement.getString(2);
-				api.setStatus("Success");
+				String out = callableStatement.getString(2);
+				api.setStatus(out);
 				
 				
 				
 			}catch(Exception e) {
-				out = "E";
-				api.setStatus("Failure");
+				
+				api.setStatus("E");
 				e.printStackTrace();
 			}finally {
+				
+				if(callableStatement!=null) {
+					try {
+						callableStatement.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				
 				if(con!=null)
 					try {
@@ -260,7 +276,9 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 		
 		//---------------------Accept Ride Request
 		@Override
-		public ApiResponse acceptRideRequest(String tenant_id, String ride_request_id, String vehicle_id,String driver_id) {
+		public ApiResponse acceptRideRequest(String tenant_id, String ride_request_id,
+											 String vehicle_id,String driver_id) {
+			
 			java.sql.CallableStatement callableStatement = null;
 			Connection con = null;
 			ApiResponse api = null;
@@ -269,19 +287,29 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			try {
 				api = new ApiResponse();
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-				callableStatement = con.prepareCall("{call da_accept_ride_request}");
+				
+				callableStatement = con.prepareCall("{call da_accept_ride_request(?,?,?,?)}");
 				callableStatement.setString(1, tenant_id);
 				callableStatement.setString(2, ride_request_id);
 				callableStatement.setString(3, vehicle_id);
 				callableStatement.setString(4, driver_id);
-				callableStatement.registerOutParameter(5,java.sql.Types.VARCHAR);
+				callableStatement.registerOutParameter(5,java.sql.Types.CHAR);
 				callableStatement.executeUpdate();
 				out = callableStatement.getNString(5) ;
 				api.setStatus(out);
 			}catch(Exception e) {
-				api.setStatus("Failed");
+				api.setStatus("E");
 				e.printStackTrace();
 			}finally {
+				
+				if(callableStatement!=null) {
+					try {
+						callableStatement.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				
 				if(con!=null)
 					try {
@@ -292,10 +320,11 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			}
 			return api;
 		}
-	//decline ride request
+		
+		
+	   //decline ride request
 		@Override
-		public ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id,
-				String driver_id) {
+		public ApiResponse declineRideRequest(String tenant_id, String ride_request_id, String vehicle_id) {
 			java.sql.CallableStatement callableStatement = null;
 			Connection con = null;
 			ApiResponse api = null;
@@ -304,19 +333,27 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			try {
 				api = new ApiResponse();
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-				callableStatement = con.prepareCall("{call da_decline_ride_p}");
+				callableStatement = con.prepareCall("{call da_decline_ride_p(?,?,?,?)}");
 				callableStatement.setString(1, tenant_id);
 				callableStatement.setString(2, ride_request_id);
 				callableStatement.setString(3, vehicle_id);
-				callableStatement.setString(4, driver_id);
-				callableStatement.registerOutParameter(5,java.sql.Types.VARCHAR);
+				callableStatement.registerOutParameter(4,java.sql.Types.VARCHAR);
 				callableStatement.executeUpdate();
-				out = callableStatement.getNString(5) ;
+				out = callableStatement.getNString(4) ;
 				api.setStatus(out);
 			}catch(Exception e) {
-				api.setStatus("Failed");
+				api.setStatus("E");
 				e.printStackTrace();
 			}finally {
+				
+				if(callableStatement!=null) {
+					try {
+						callableStatement.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				
 				if(con!=null)
 					try {
@@ -331,41 +368,38 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 		}
 
 		@Override
-		public List<TripRequest> getRiderRequest(String tenant_id, String vehicle_id) {
+		public TripRequest getRiderRequest(String tenant_id, String vehicle_id) {
 			
 				
-				List<TripRequest> tripRequest= null;
+				TripRequest tripRequest= null;
 				
 		
 				java.sql.CallableStatement callableStatement = null;
 				Connection con = null;
 				ResultSet rs = null;
 				try {
-					 tripRequest = new ArrayList<TripRequest>();
-					 
+					
+					tripRequest = new TripRequest();
 					con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-					callableStatement = con.prepareCall("{call da_get_new_ride_request_p()}");
+					callableStatement = con.prepareCall("{call da_get_new_ride_request_p(?,?)}");
 					callableStatement.setString(1, tenant_id);
 					callableStatement.setString(2, vehicle_id);
 					
 
 					rs = callableStatement.executeQuery();
 					if(rs.next()) {
-						TripRequest tm = new TripRequest();
-						tm.setRide_request_id(rs.getString("ride_request_id"));
-						tm.setProduct_id(rs.getString("product_id"));
-						tm.setProduct_name(rs.getString("Product_name"));
-						tm.setRider_id(rs.getString("rider_id"));
-						tm.setRider_full_name(rs.getString("rider_full_name"));
-						tm.setPick_up_latitude(rs.getString("pick_up_latitude"));
-						tm.setPick_up_longitude(rs.getString("pickup_longitude"));
-						tm.setPick_up_location_text(rs.getString("pick_up_location_text"));
-						tm.setDrop_off_latitude(rs.getString("drop_off_latitude"));
-						tm.setDrop_off_longitude(rs.getString("drop_off_longitude"));
-						tm.setDrop_off_location_text(rs.getString("drop_off_location_text"));
-						
-						tripRequest.add(tm);
-						tm = null;
+						tripRequest = new TripRequest();
+						tripRequest.setRide_request_id(rs.getString("ride_request_id"));
+						tripRequest.setProduct_id(rs.getString("product_id"));
+						tripRequest.setProduct_name(rs.getString("Product_name"));
+						tripRequest.setRider_id(rs.getString("rider_id"));
+						tripRequest.setRider_full_name(rs.getString("rider_full_name"));
+						tripRequest.setPick_up_latitude(rs.getString("pick_up_latitude"));
+						tripRequest.setPick_up_longitude(rs.getString("pickup_longitude"));
+						tripRequest.setPick_up_location_text(rs.getString("pick_up_location_text"));
+						tripRequest.setDrop_off_latitude(rs.getString("drop_off_latitude"));
+						tripRequest.setDrop_off_longitude(rs.getString("drop_off_longitude"));
+						tripRequest.setDrop_off_location_text(rs.getString("drop_off_location_text"));
 					
 					}
 					
@@ -402,6 +436,61 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 				return tripRequest;
 				
 			}
+		
+		
+
+		@Override
+		public ApiResponse dettachVehicle(String tenant_id, String driver_id) {
+			
+			java.sql.CallableStatement callableStatement = null;
+			Connection con = null;
+			String out = "E";
+			ApiResponse api = null;
+		
+			
+			try {
+				api = new ApiResponse();
+				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
+				callableStatement = con.prepareCall("{call da_driver_check_out_p(?,?,?,?)}");
+				
+				callableStatement.setString(1,tenant_id);
+				callableStatement.setString(2, driver_id);
+				callableStatement.registerOutParameter(3, java.sql.Types.CHAR);
+				callableStatement.executeUpdate();
+				out = callableStatement.getString(3);
+				api.setStatus(out);
+				
+				api.setMsg("Success");			
+				
+			}catch(Exception e) {
+				out = "E";
+				api.setStatus(out);
+				api.setMsg("Failure");		
+				e.printStackTrace();
+			}
+			finally {
+				
+				if(callableStatement!=null) {
+					try {
+						callableStatement.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(con!=null)
+					try {
+						con.close();
+					}catch (SQLException ex) {
+							ex.printStackTrace();
+				}	
+			}
+
+			return api;
+			
 		}
+		
+		
+		}//Class
 
 

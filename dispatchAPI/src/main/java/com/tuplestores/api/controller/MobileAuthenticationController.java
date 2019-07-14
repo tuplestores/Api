@@ -35,59 +35,65 @@ public class MobileAuthenticationController {
 	@CrossOrigin(origins = "*")
 	@RequestMapping(value = "/verifydriver", method = RequestMethod.GET)
 	public @ResponseBody Object verifydriver(@RequestParam String isd,@RequestParam String Mobile,
-			@RequestParam String invite,
-			HttpSession session,
-			HttpServletRequest request) {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
+			@RequestParam String invite)  {
+		
+		//Map<String, Object> map = new LinkedHashMap<String, Object>();
 		HttpHeaders httpHeaders = new HttpHeaders();
+		DriverModel dm = null;
 		try {
 			
-			ApiResponse res=authenticationMobileService.verifydriver(isd,Mobile,invite);
-			map.put("obj", res);	
+			 dm=authenticationMobileService.verifydriver(isd,Mobile,invite);
+			//map.put("obj", dm);	
 
 		} catch (Exception e) {
-			map.put("obj", null);
+			//map.put("obj", null);
 			e.printStackTrace();
 		}		
 				
-		return new ResponseEntity<Map>(map,httpHeaders, HttpStatus.OK);	
+		return new ResponseEntity<DriverModel>(dm,httpHeaders, HttpStatus.OK);	
 	}
 	
 	
 	//-------------get driver profile-----------------
 		@RequestMapping(value = "/getDriverProfile" ,method = RequestMethod.GET)
-		public @ResponseBody Object getDriverProfile(@RequestParam String driver_id,
-													HttpSession session,
-													HttpServletRequest request) {
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
+		public @ResponseBody Object getDriverProfile(@RequestParam String driver_id) {
+
+
+			DriverModel driverModel = null;
+			
 			HttpHeaders httpHeaders = new HttpHeaders();
 			try {
-				DriverModel listDriver = authenticationMobileService.getDriverProfile(driver_id);
-				map.put("listDriver",listDriver);
+				 driverModel = authenticationMobileService.getDriverProfile(driver_id);
+				
 			}catch(Exception e) {
-				map.put("listDriver",null);
+				
 				e.printStackTrace();
 			}
-			return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
+			return new ResponseEntity<DriverModel>(driverModel,httpHeaders,HttpStatus.OK);
 		}
 		
 		//----------Update Driver Profile
-		@RequestMapping(value = "/updateDriverProfile", method = RequestMethod.POST)
-		public @ResponseBody Object acceptRideRequests(@RequestParam String driver_id,@RequestParam String email,
-														@RequestParam String first_name,@RequestParam String last_name,
-														@RequestParam String isd_code,@RequestParam String mobile,
-														HttpSession session,
-														HttpServletRequest request) {
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
+		@RequestMapping(value = "/updateDriverProfile", method = RequestMethod.GET)
+		public @ResponseBody Object acceptRideRequests( @RequestParam String tenant_id,
+														@RequestParam String driver_id,
+														@RequestParam String email,
+														@RequestParam String first_name,
+														@RequestParam String last_name,
+														@RequestParam String isd_code,
+														@RequestParam String mobile
+														)   {
+			
 			HttpHeaders httpHeaders = new HttpHeaders();
+			ApiResponse api = null;
 			try {
-				ApiResponse api=authenticationMobileService.updateDriverProfile(driver_id,email,first_name,last_name,isd_code,mobile);
-				map.put("api",api);
+				 api=authenticationMobileService.updateDriverProfile(tenant_id, driver_id,
+						 email, first_name, last_name, isd_code, mobile);
+				
 			}catch(Exception e) {
-				map.put("api",null);
+				
 				e.printStackTrace();
 			}
-			return new ResponseEntity<Map>(map,httpHeaders,HttpStatus.OK);
+			return new ResponseEntity<ApiResponse>(api,httpHeaders,HttpStatus.OK);
 		}
 		
 	

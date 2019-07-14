@@ -1,9 +1,24 @@
 package com.tuplestores.api.model.general;
 
+
 public class DriverModel {
-private String tenant_id,driver_id,email,first_name,
-	last_name,isd_code,mobile,driver_online,checked_in_vehicle_id,
-	verified,invite_code,status,msg,driver_name,driver_mobile,driver_email;
+	
+private String tenant_id;
+private String driver_id;
+private String email; 
+private String first_name;
+private String last_name;
+private String isd_code;
+private String mobile;
+private String driver_online;
+private String checked_in_vehicle_id;
+	
+private String verified;
+private String invite_code;
+private String status;
+private String msg,driver_name;
+private String driver_mobile;
+private String driver_email;
 
 public String getStatus() {
 	return status;
