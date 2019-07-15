@@ -63,6 +63,11 @@ public class TripsServiceimpl implements TripsService{
 		
 		return tripsDao.dettachVehicle(tenant_id, driver_id);
 	}
+	@Override
+	public ApiResponse cancelRideRequest(String tenant_id, String ride_request_id,String vehicle_id, String driver_id) {
+		
+			return tripsDao.cancelRideRequest(tenant_id, ride_request_id,vehicle_id, driver_id);
+	}
 	
 
 }

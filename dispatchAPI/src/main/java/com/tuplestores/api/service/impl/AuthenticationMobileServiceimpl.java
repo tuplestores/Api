@@ -21,10 +21,10 @@ public class AuthenticationMobileServiceimpl implements AuthenticationMobileServ
 	}
 	
 	@Override
-	public DriverModel getDriverProfile(String driver_id) {
+	public DriverModel getDriverProfile(String tenant_id, String driver_id) {
 		
 
-		return authenticationMobileDao.getDriverProfile(driver_id);
+		return authenticationMobileDao.getDriverProfile(tenant_id, driver_id);
 		
 	}
 

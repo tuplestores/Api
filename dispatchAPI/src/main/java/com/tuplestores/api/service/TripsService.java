@@ -35,6 +35,8 @@ public interface TripsService {
 		TripRequest getRiderRequest(String tenant_id, String vehicle_id);
 		
 		ApiResponse dettachVehicle(String tenant_id, String driver_id);
+		
+		ApiResponse cancelRideRequest(String tenant_id, String ride_request_id, String vehicle_id,String driver_id);
 
 		
 }

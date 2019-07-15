@@ -111,8 +111,8 @@ public class TripsController {
 		}
 		
 		//------------Accept Ride Requests-----------------------------
-		@RequestMapping(value = "/acceptRideRequests", method = RequestMethod.GET)
-		public @ResponseBody Object acceptRideRequests(@RequestParam String tenant_id,
+		@RequestMapping(value = "/acceptRideRequest", method = RequestMethod.GET)
+		public @ResponseBody Object acceptRideRequest(@RequestParam String tenant_id,
 														@RequestParam String ride_request_id,
 														@RequestParam String vehicle_id,
 														@RequestParam String driver_id) {
@@ -130,8 +130,9 @@ public class TripsController {
 		}
 		
 		//--------------Decline Ride Requests
-		@RequestMapping(value = "/declineRideRequests", method = RequestMethod.GET)
-		public @ResponseBody Object declineRideRequests(@RequestParam String tenant_id,@RequestParam String ride_request_id,
+		@RequestMapping(value = "/declineRideRequest", method = RequestMethod.GET)
+		public @ResponseBody Object declineRideRequest(@RequestParam String tenant_id,
+													   @RequestParam String ride_request_id,
 														@RequestParam String vehicle_id) {
 			
 			
@@ -183,6 +184,27 @@ public class TripsController {
 			return new ResponseEntity<ApiResponse>(api,httpHeaders,HttpStatus.OK);
 			
 			}
+		
+		
+		//------------Accept Ride Requests-----------------------------
+		@RequestMapping(value = "/cancelRideRequest", method = RequestMethod.GET)
+		public @ResponseBody Object cancelRideRequest(@RequestParam String tenant_id,
+														@RequestParam String ride_request_id,
+														@RequestParam String vehicle_id,
+														@RequestParam String driver_id
+														) {
+		
+			HttpHeaders httpHeaders = new HttpHeaders();
+			ApiResponse api=null;
+			try {
+				 api=tripsService.cancelRideRequest(tenant_id, ride_request_id, vehicle_id, driver_id);
+				
+			}catch(Exception e) {
+				 
+				e.printStackTrace();
+			}
+			return new ResponseEntity<ApiResponse>(api,httpHeaders,HttpStatus.OK);
+		}
 	
 	
 }//Class

@@ -54,16 +54,18 @@ public class MobileAuthenticationController {
 	}
 	
 	
+
 	//-------------get driver profile-----------------
 		@RequestMapping(value = "/getDriverProfile" ,method = RequestMethod.GET)
-		public @ResponseBody Object getDriverProfile(@RequestParam String driver_id) {
+		public @ResponseBody Object getDriverProfile(@RequestParam String tenant_id,
+													 @RequestParam String driver_id) {
 
 
 			DriverModel driverModel = null;
 			
 			HttpHeaders httpHeaders = new HttpHeaders();
 			try {
-				 driverModel = authenticationMobileService.getDriverProfile(driver_id);
+				 driverModel = authenticationMobileService.getDriverProfile(tenant_id, driver_id);
 				
 			}catch(Exception e) {
 				

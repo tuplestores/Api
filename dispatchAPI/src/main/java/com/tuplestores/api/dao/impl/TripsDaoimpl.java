@@ -288,14 +288,14 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 				api = new ApiResponse();
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
 				
-				callableStatement = con.prepareCall("{call da_accept_ride_request(?,?,?,?)}");
+				callableStatement = con.prepareCall("{call da_accept_ride_request(?,?,?,?,?)}");
 				callableStatement.setString(1, tenant_id);
 				callableStatement.setString(2, ride_request_id);
 				callableStatement.setString(3, vehicle_id);
 				callableStatement.setString(4, driver_id);
 				callableStatement.registerOutParameter(5,java.sql.Types.CHAR);
 				callableStatement.executeUpdate();
-				out = callableStatement.getNString(5) ;
+				out = callableStatement.getString(5) ;
 				api.setStatus(out);
 			}catch(Exception e) {
 				api.setStatus("E");
@@ -339,7 +339,7 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 				callableStatement.setString(3, vehicle_id);
 				callableStatement.registerOutParameter(4,java.sql.Types.VARCHAR);
 				callableStatement.executeUpdate();
-				out = callableStatement.getNString(4) ;
+				out = callableStatement.getString(4) ;
 				api.setStatus(out);
 			}catch(Exception e) {
 				api.setStatus("E");
@@ -487,6 +487,54 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			}
 
 			return api;
+			
+		}
+
+		@Override
+		public ApiResponse cancelRideRequest(String tenant_id, String ride_request_id, String vehicle_id, String driver_id) {
+			
+
+			java.sql.CallableStatement callableStatement = null;
+			Connection con = null;
+			ApiResponse api = null;
+			String out = "E";
+			
+			try {
+				api = new ApiResponse();
+				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
+				callableStatement = con.prepareCall("{call da_cancel_ride_request_p(?,?,?,?,?)}");
+				callableStatement.setString(1, tenant_id);
+				callableStatement.setString(2, ride_request_id);
+				callableStatement.setString(3, vehicle_id);
+				callableStatement.setString(4, driver_id);
+				callableStatement.registerOutParameter(5,java.sql.Types.CHAR);
+				callableStatement.executeUpdate();
+				out = callableStatement.getString(5) ;
+				api.setStatus(out);
+			}catch(Exception e) {
+				api.setStatus("E");
+				e.printStackTrace();
+			}finally {
+				
+				if(callableStatement!=null) {
+					try {
+						callableStatement.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				if(con!=null)
+					try {
+						con.close();
+						}catch (SQLException ex) {
+							ex.printStackTrace();
+						}
+			}
+			return api;
+		
+			
 			
 		}
 		

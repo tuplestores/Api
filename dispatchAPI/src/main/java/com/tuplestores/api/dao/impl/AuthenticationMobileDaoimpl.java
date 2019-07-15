@@ -92,7 +92,7 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 	
 
 		@Override
-		public DriverModel getDriverProfile(String driver_id) {
+		public DriverModel getDriverProfile(String tenant_id, String driver_id) {
 			{
 				
 				DriverModel driver = null;
@@ -105,19 +105,21 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 					
 					con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
 					
-					callableStatement = con.prepareCall("{call ap_list_vehicle_p(?)}");
+					callableStatement = con.prepareCall("{call da_get_driver_details_p(?,?)}");
 					
-					callableStatement.setString(1,driver_id);
+					callableStatement.setString(1,tenant_id);
+					callableStatement.setString(2,driver_id);
 					rs=callableStatement.executeQuery();
 					
 					
 					if(rs.next()) {
 						driver = new DriverModel();
-						driver.setDriver_name(rs.getString("Driver_Name"));
-						driver.setDriver_email(rs.getString("Driver_email"));
-						driver.setDriver_mobile(rs.getString("Driver_Mobile"));
-						driver.setInvite_code(rs.getString("Invite_code"));
-						driver.setIsd_code(rs.getString("String"));
+						driver.setDriver_name(rs.getString("first_name"));
+						driver.setDriver_email(rs.getString("email"));
+						driver.setDriver_mobile(rs.getString("mobile"));
+						driver.setIsd_code(rs.getString("isd_code"));
+						driver.setTenant_id(tenant_id);
+						driver.setDriver_id(driver_id);
 					
 						
 					}
@@ -126,12 +128,28 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 					driver = null;
 					e.printStackTrace();
 				}finally {
+					if(rs!=null) {
+						try {
+							rs.close();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if(callableStatement!=null) {
+						try {
+							callableStatement.close();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					if(con!=null)
 						try {
 							con.close();
-						}catch(SQLException ex) {
-							ex.printStackTrace();
-						}
+							}catch (SQLException ex) {
+								ex.printStackTrace();
+							}
 				}
 				
 					return driver;
@@ -156,12 +174,12 @@ public class AuthenticationMobileDaoimpl implements AuthenticationMobileDao{
 				callableStatement.setString(2, driver_id);
 				callableStatement.setString(3, email);
 				callableStatement.setString(4, first_name);
-				callableStatement.setString(7,last_name);
+				callableStatement.setString(5,last_name);
 				callableStatement.setString(6, isd_code);
 				callableStatement.setString(7, mobile);
 				callableStatement.registerOutParameter(8, java.sql.Types.CHAR);
 				callableStatement.executeUpdate();
-				out = callableStatement.getString(4);
+				out = callableStatement.getString(8);
 				api.setStatus(out);
 				api.setMsg("Message");
 				
