@@ -76,7 +76,7 @@ public class MobileAuthenticationController {
 		
 		//----------Update Driver Profile
 		@RequestMapping(value = "/updateDriverProfile", method = RequestMethod.GET)
-		public @ResponseBody Object acceptRideRequests( @RequestParam String tenant_id,
+		public @ResponseBody Object updateDriverProfile( @RequestParam String tenant_id,
 														@RequestParam String driver_id,
 														@RequestParam String email,
 														@RequestParam String first_name,

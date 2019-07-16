@@ -16,9 +16,12 @@ private String checked_in_vehicle_id;
 private String verified;
 private String invite_code;
 private String status;
-private String msg,driver_name;
+private String msg;
+private String driver_name;
 private String driver_mobile;
 private String driver_email;
+
+
 
 public String getStatus() {
 	return status;
@@ -148,8 +151,5 @@ public void setDriver_email(String driver_email) {
 	this.driver_email = driver_email;
 }
 
-public void setIsd(String string) {
-	// TODO Auto-generated method stub
-	
-}
+
 }

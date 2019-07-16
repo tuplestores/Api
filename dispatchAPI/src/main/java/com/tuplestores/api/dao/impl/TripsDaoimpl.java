@@ -235,11 +235,12 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			Connection con = null;
 			ApiResponse api = null;
 			
+			System.out.print("Param= "+device_data);
 			
 			try {
 				api = new ApiResponse();
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-				callableStatement = con.prepareCall("{call da_load_device_data(?,?}");
+				callableStatement = con.prepareCall("{call da_load_device_data_p(?,?)}");
 				callableStatement.setString(1, device_data);
 				callableStatement.registerOutParameter(2,java.sql.Types.CHAR);
 				callableStatement.executeUpdate();
@@ -288,7 +289,7 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 				api = new ApiResponse();
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
 				
-				callableStatement = con.prepareCall("{call da_accept_ride_request(?,?,?,?,?)}");
+				callableStatement = con.prepareCall("{call da_accept_ride_request_p(?,?,?,?,?)}");
 				callableStatement.setString(1, tenant_id);
 				callableStatement.setString(2, ride_request_id);
 				callableStatement.setString(3, vehicle_id);
@@ -395,7 +396,7 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 						tripRequest.setRider_id(rs.getString("rider_id"));
 						tripRequest.setRider_full_name(rs.getString("rider_full_name"));
 						tripRequest.setPick_up_latitude(rs.getString("pick_up_latitude"));
-						tripRequest.setPick_up_longitude(rs.getString("pickup_longitude"));
+						tripRequest.setPick_up_longitude(rs.getString("pick_up_longitude"));
 						tripRequest.setPick_up_location_text(rs.getString("pick_up_location_text"));
 						tripRequest.setDrop_off_latitude(rs.getString("drop_off_latitude"));
 						tripRequest.setDrop_off_longitude(rs.getString("drop_off_longitude"));
@@ -451,7 +452,7 @@ public class TripsDaoimpl implements com.tuplestores.api.dao.TripsDao{
 			try {
 				api = new ApiResponse();
 				con = dispatchDBConnection.getJdbcTemplate().getDataSource().getConnection();
-				callableStatement = con.prepareCall("{call da_driver_check_out_p(?,?,?,?)}");
+				callableStatement = con.prepareCall("{call da_driver_check_out_p(?,?,?)}");
 				
 				callableStatement.setString(1,tenant_id);
 				callableStatement.setString(2, driver_id);
